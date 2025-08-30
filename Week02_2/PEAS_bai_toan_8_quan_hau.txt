@@ -1,0 +1,7 @@
+# BT tuan 02, buoi 02 mon AI
+# Nguyen Van Hoai - 20110107
+
+P: tốc độ, độ chính xác, yêu cầu đặt 8 quân hậu sao cho các quân hậu đó không ăn lẫn nhau.
+E: bàn cờ 8x8, các ô cờ trống, các ô cờ đã đặt quân hậu.
+A: áp dụng luật, kiểm tra vị trí quân hậu có hợp lệ không.
+S: trạng thái, vị trí quân hậu đã đặt và các ô cờ còn trống.

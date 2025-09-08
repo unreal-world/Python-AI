@@ -37,7 +37,7 @@ def draw_board():
             canvas_right.create_rectangle(x1, y1, x2, y2, fill=color)
 
 def draw_board_with_queen():
-    get_solution = thuat_toan.get_solution_board() # Lấy nghiệm từ thuật toán
+    get_solution = thuat_toan.get_solution_arr() # Lấy nghiệm từ thuật toán
     arr_x = [] # Mảng lưu vị trí các quân hậu
     arr_y = [0, 1, 2, 3, 4, 5, 6, 7] # Vị trí cố định
     for i in range(8):

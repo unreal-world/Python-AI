@@ -1,62 +1,49 @@
-# BT tuan 04, buoi 01 mon AI
-# Nguyen Van Hoai - 20110107
 
-# Nguồn: tham khảo từ AI
+# Nguồn: Tham khảo từ AI
+# Nguyễn Văn Hoài - 20110107
 
 import numpy as np
 from collections import deque
 
-N = 8  # số quân hậu
+N = 8
 
-def is_safe(arr, row, col):
-    # Kiểm tra có thể đặt hậu tại (row, col) không
-    # Kiểm tra cột
-    if 1 in arr[:row, col]:
-        return False
-    
-    # Kiểm tra đường chéo trái trên
-    r, c = row - 1, col - 1
-    while r >= 0 and c >= 0:
-        if arr[r, c] == 1:
+def is_safe(board, row, col):
+    for i in range(col):
+        if board[row][i] == 1:
             return False
-        r -= 1
-        c -= 1
-    
-    # Kiểm tra đường chéo phải trên
-    r, c = row - 1, col + 1
-    while r >= 0 and c < N:
-        if arr[r, c] == 1:
-            return False
-        r -= 1
-        c += 1
-    
+        # kiểm tra đường chéo
+        for d in range(1, col+1):
+            if row-d >= 0 and board[row-d][col-d] == 1:
+                return False
+            if row+d < N and board[row+d][col-d] == 1:
+                return False
     return True
 
-def bfs_n_queens(n):
-    # Giải bài toán n-queens bằng BFS
-    queue = deque()
-    queue.append((np.zeros((n, n), dtype=int), 0))  # bàn cờ rỗng + hàng 0
-    
-    while queue:
-        arr, row = queue.popleft()
-        
-        if row == n:  # đủ n quân hậu
-            return arr
+def bfs():
+    start = np.zeros((N, N), dtype=int)
+    queue = deque([(start, 0)])  # (board, col)
+    steps = []                   # lưu tất cả các bước
 
-        for col in range(n):
-            if is_safe(arr, row, col):
-                new_arr = arr.copy()
-                new_arr[row, col] = 1
-                queue.append((new_arr, row + 1))
-    
+    while queue:
+        board, col = queue.popleft()   # FIFO → BFS
+        steps.append(board.copy())
+
+        if col >= N:
+            return steps  # tìm thấy nghiệm
+
+        for row in range(N):
+            if is_safe(board, row, col):
+                new_board = board.copy()
+                new_board[row][col] = 1
+                queue.append((new_board, col + 1))
+
+    return steps
+
+def get_solution_arr():
+    #Lấy nghiệm cuối cùng (mảng numpy 8x8) từ UCS.
+    steps = bfs()
+    if steps:
+        return steps[-1]  # trạng thái cuối cùng là nghiệm
     return None
 
-def get_solution_arr(n=8):
-    # Trả về một mảng 2 chiều numpy (n x n) với nghiệm n-queens
-    return bfs_n_queens(n)
-
-# Chạy thuật toán và in nghiệm
-solution = get_solution_arr()
-
-# print("Nghiệm của bài toán 8 quân hậu (1 = hậu, 0 = trống):")
-# print(solution)
+#print(get_solution_arr())

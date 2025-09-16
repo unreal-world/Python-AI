@@ -1,9 +1,10 @@
-# BT tuan 04, buoi 02 mon AI
-# Nguyen Van Hoai - 20110107
 
-# Nguồn: tham khảo từ AI
+# Nguồn: Tham khảo từ AI
+# Nguyễn Văn Hoài - 20110107
 
 import numpy as np
+
+N = 8
 
 def is_safe(state, row, col):
     # Kiểm tra có thể đặt quân hậu tại (row, col) không
@@ -14,20 +15,20 @@ def is_safe(state, row, col):
     return True
 
 def goal_test(state):
-    return len(state) == 8 # Đủ 8 quân hậu
+    return len(state) == N  # đủ N quân hậu
 
-def expand(state):
-    # Sinh các trạng thái con
-    col = len(state)  # cột tiếp theo cần đặt hậu
-    successors = []
-    for row in range(8):
-        if is_safe(state, row, col):
-            successors.append(state + [row])
-    return successors
+def state_to_board(state):
+    #Chuyển state (list vị trí hàng cho từng cột) thành mảng 8x8
+    board = np.zeros((N, N), dtype=int)
+    for col, row in enumerate(state):
+        board[row][col] = 1
+    return board
 
-def recursive_dls(state, limit):
-    # Thuật toán Recursive Depth-Limited Search
-    cutoff_occurred = False
+def recursive_dls(state, limit, steps):
+    #Recursive DLS: luôn lưu lại trạng thái hiện tại vào steps.
+    #steps: danh sách chứa các numpy array (mỗi array là 1 bàn cờ).
+    # Lưu trạng thái hiện tại
+    steps.append(state_to_board(state))
 
     if goal_test(state):
         return state
@@ -36,28 +37,29 @@ def recursive_dls(state, limit):
         return "cutoff"
 
     else:
-        for successor in expand(state):
-            result = recursive_dls(successor, limit)
-            if result == "cutoff":
-                cutoff_occurred = True
-            elif result != "failure":
-                return result
-
+        cutoff_occurred = False
+        for row in range(N):
+            if is_safe(state, row, len(state)):
+                result = recursive_dls(state + [row], limit, steps)
+                if result == "cutoff":
+                    cutoff_occurred = True
+                elif result != "failure":
+                    return result
         return "cutoff" if cutoff_occurred else "failure"
 
-def depth_limited_search(limit):
-    return recursive_dls([], limit)
+def dls(limit):
+    steps = []
+    result = recursive_dls([], limit, steps)
+    return steps, result
 
 def get_solution_arr():
-    # Trả về một mảng 2 chiều numpy (n x n) với nghiệm n-queens
-    arr = np.zeros((8, 8), dtype=int)
-    if solution not in ("failure", "cutoff"):
-        for col in range(len(solution)):
-            row = solution[col]
-            arr[row][col] = 1
-    return arr
+    steps, result = dls(N)
+    if result not in ("failure", "cutoff"):
+        return steps[-1]  # trạng thái cuối cùng
+    return None
 
-solution = depth_limited_search(8)
+def get_steps():
+    steps, _ = dls(N)
+    return steps
 
-# print("Nghiệm của bài toán 8 quân hậu (1 = hậu, 0 = trống):")
-# print(get_solution_arr())
+#print(get_solution_arr())

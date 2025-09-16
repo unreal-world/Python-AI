@@ -1,94 +1,67 @@
-# BT tuan 04, buoi 02 mon AI
-# Nguyen Van Hoai - 20110107
 
-# Nguồn: tham khảo từ AI
+# Nguồn: Tham khảo từ AI
+# Nguyễn Văn Hoài - 20110107
 
-import heapq
 import numpy as np
+import heapq
+import itertools
 
-N = 8  # số quân hậu
+N = 8
+counter = itertools.count()  # bộ đếm duy nhất để tránh so sánh numpy
 
-def is_safe(state, row, col):
-    # Kiểm tra có thể đặt quân hậu tại (row, col) không
-    for c in range(len(state)):
-        r = state[c]
-        if r == row or abs(r - row) == abs(c - col):
+def is_safe(board, row, col):
+    for i in range(col):
+        if board[row][i] == 1:
             return False
+        for d in range(1, col+1):
+            if row-d >= 0 and board[row-d][col-d] == 1:
+                return False
+            if row+d < N and board[row+d][col-d] == 1:
+                return False
     return True
 
-def is_have_positions(row, col):
-    # Trả về tất cả ô bị một quân hậu tại (row, col) khống chế
-    positions = set()
+def cost_of_placement(board, row, col):
+    #Tính chi phí khi đặt một quân hậu tại (row, col):
+    #Chiếm bao nhiêu ô bên phải cùng hàng + 2 đường chéo bên phải
 
-    # hàng và cột
-    for i in range(N):
-        if i != col:
-            positions.add((row, i))
-        if i != row:
-            positions.add((i, col))
+    count = 0
+    for j in range(col+1, N):  # cùng hàng bên phải
+        count += 1
+    for d in range(1, N):      # các đường chéo bên phải
+        if row-d >= 0 and col+d < N:
+            count += 1
+        if row+d < N and col+d < N:
+            count += 1
+    return count
 
-    # chéo chính
-    for d in range(1, N):
-        if row + d < N and col + d < N:
-            positions.add((row + d, col + d))
-        if row - d >= 0 and col - d >= 0:
-            positions.add((row - d, col - d))
+def ucs():
+    #Trả về tất cả các bước (steps) để thuật toán UCS tìm nghiệm.
 
-    # chéo phụ
-    for d in range(1, N):
-        if row + d < N and col - d >= 0:
-            positions.add((row + d, col - d))
-        if row - d >= 0 and col + d < N:
-            positions.add((row - d, col + d))
+    start = np.zeros((N, N), dtype=int)
+    pq = [(0, next(counter), start, 0)]  # (cost, id, board, col)
+    steps = []
 
-    return positions
+    while pq:
+        cost, _, board, col = heapq.heappop(pq)
+        steps.append(board.copy())
 
-def goal_test(state):
-    return len(state) == N
+        if col >= N:
+            return steps  # nghiệm chi phí nhỏ nhất
 
-def expand(state, attacked):
-    # Sinh các trạng thái con từ state
-    col = len(state)
-    successors = []
-    for row in range(N):
-        if is_safe(state, row, col):
-            new_positions = is_have_positions(row, col)
-            # chỉ tính thêm số ô mới bị khống chế
-            step_cost = len(new_positions - attacked)
-            successors.append((state + [row], attacked | new_positions, step_cost))
-    return successors
+        for row in range(N):
+            if is_safe(board, row, col):
+                new_board = board.copy()
+                new_board[row][col] = 1
+                new_cost = cost + cost_of_placement(board, row, col)
+                heapq.heappush(pq, (new_cost, next(counter), new_board, col + 1))
 
-def uniform_cost_search():
-    # UCS cho bài toán 8 quân hậu (chi phí = số ô mới bị khống chế)
-    frontier = []
-    heapq.heappush(frontier, (0, [], set()))  # (cost, state, attacked)
-    explored = set()
-
-    while frontier:
-        cost, state, attacked = heapq.heappop(frontier)
-
-        if goal_test(state):
-            return state, cost
-
-        explored.add(tuple(state))
-
-        for successor, new_attacked, step_cost in expand(state, attacked):
-            new_cost = cost + step_cost
-            if tuple(successor) not in explored:
-                heapq.heappush(frontier, (new_cost, successor, new_attacked))
-
-    return None, float("inf")
+    return steps
 
 def get_solution_arr():
-    arr = np.zeros((N, N), dtype=int)
-    if solution:
-        for col in range(len(solution)):
-            row = solution[col]
-            arr[row][col] = 1
-    return arr
+    #Lấy nghiệm cuối cùng (mảng numpy 8x8) từ UCS.
+    steps = ucs()
+    if steps:
+        return steps[-1]  # trạng thái cuối cùng là nghiệm
+    return None
 
-solution, cost = uniform_cost_search()
-
-# print("Nghiệm tìm được:", solution)
-# print("Chi phí thấp nhất:", cost)
-# print(get_solution_arr())
+#print(get_solution_arr())

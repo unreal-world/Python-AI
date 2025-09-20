@@ -8,6 +8,10 @@ import Thuat_toan_DLS as thuat_toan_DLS
 import Thuat_toan_IDS as thuat_toan_IDS
 import Thuat_toan_Greedy_BFS as thuat_toan_Greedy
 import Thuat_toan_A_star as thuat_toan_A_star
+import Thuat_toan_Hill_Climbing as thuat_toan_Hill_climbing
+import Thuat_toan_Beam_Search as thuat_toan_Beam_search
+import Thuat_toan_Simulated_Annealing as thuat_toan_Simulated_Annealing
+import Thuat_toan_Genetic_Algorithm as thuat_toan_Genetic_Algorithm
 
 import tkinter as tk
 import time
@@ -17,20 +21,6 @@ root.title("8 Quan hau - Co vua")
 
 cell_size = 60
 board_size = 8 # Bàn cờ gồm 8 ô, kích thước 8x8
-
-# Tạo hai frame bên trái và phải
-left_frame = tk.Frame(root)
-left_frame.pack(side=tk.LEFT, padx=50, pady=50)
-right_frame = tk.Frame(root)
-right_frame.pack(side=tk.RIGHT, padx=50, pady=50)
-
-# Canvas bên trái
-canvas_left = tk.Canvas(left_frame, width=cell_size*board_size, height=cell_size*board_size)
-canvas_left.pack()
-
-# Canvas bên phải
-canvas_right = tk.Canvas(right_frame, width=cell_size*board_size, height=cell_size*board_size)
-canvas_right.pack()
 
 #-------------------------
 def draw_board():
@@ -177,6 +167,82 @@ def draw_board_with_A_star():
         time.sleep(0.01)
         root.update()       
 
+def draw_board_with_Hill_climbing():
+    global running
+    running = True
+    steps = thuat_toan_Hill_climbing.get_steps()
+    for state in steps:
+        if not running:
+            break
+        clear_board()
+        for i in range(8):
+            for j in range(8):
+                if state[i][j] == 1:
+                    canvas_right.create_text(
+                        j * cell_size + cell_size // 2,
+                        i * cell_size + cell_size // 2,
+                        text="♛", font=("Arial", 32), fill="black"
+                    )
+        time.sleep(0.01)
+        root.update()
+
+def draw_board_with_Beam_search():
+    global running
+    running = True
+    steps = thuat_toan_Beam_search.get_steps()
+    for state in steps:
+        if not running:
+            break
+        clear_board()
+        for i in range(8):
+            for j in range(8):
+                if state[i][j] == 1:
+                    canvas_right.create_text(
+                        j * cell_size + cell_size // 2,
+                        i * cell_size + cell_size // 2,
+                        text="♛", font=("Arial", 32), fill="black"
+                    )
+        time.sleep(0.01)
+        root.update()
+
+def draw_board_with_Simulated_Annealing():
+    global running
+    running = True
+    steps = thuat_toan_Simulated_Annealing.get_steps()
+    for state in steps:
+        if not running:
+            break
+        clear_board()
+        for i in range(8):
+            for j in range(8):
+                if state[i][j] == 1:
+                    canvas_right.create_text(
+                        j * cell_size + cell_size // 2,
+                        i * cell_size + cell_size // 2,
+                        text="♛", font=("Arial", 32), fill="black"
+                    )
+        time.sleep(0.01)
+        root.update()
+
+def draw_board_with_Genetic_Algorithm():
+    global running
+    running = True
+    steps = thuat_toan_Genetic_Algorithm.get_steps()
+    for state in steps:
+        if not running:
+            break
+        clear_board()
+        for i in range(8):
+            for j in range(8):
+                if state[i][j] == 1:
+                    canvas_right.create_text(
+                        j * cell_size + cell_size // 2,
+                        i * cell_size + cell_size // 2,
+                        text="♛", font=("Arial", 32), fill="black"
+                    )
+        time.sleep(0.01)
+        root.update()
+
 #---------------------------
 def clear_board():
     canvas_left.delete("all")
@@ -187,52 +253,62 @@ def stop_algorithm():
     global running
     running = False
 
-#---------------------------
-button_show_bfs = tk.Frame(root)
-button_show_bfs.pack(side=tk.BOTTOM, pady=5)
-draw_button = tk.Button(button_show_bfs, text="Show queens (BFS)", font=("Arial", 14), command=draw_board_with_BFS) # Khi ấn nút sẽ show các vị trí quân hậu
-draw_button.pack()
+# ----------------------
+# Frame chứa 2 bàn cờ (nằm ngang)
+boards_frame = tk.Frame(root)
+boards_frame.pack(side=tk.TOP, pady=20)
 
-button_show_dfs = tk.Frame(root)
-button_show_dfs.pack(side=tk.BOTTOM, pady=5)
-draw_button = tk.Button(button_show_dfs, text="Show queens (DFS)", font=("Arial", 14), command=draw_board_with_DFS) 
-draw_button.pack()
+# Frame trái
+left_frame = tk.Frame(boards_frame)
+left_frame.pack(side=tk.LEFT, padx=20)
 
-button_show_ucs = tk.Frame(root)
-button_show_ucs.pack(side=tk.BOTTOM, pady=5)
-draw_button = tk.Button(button_show_ucs, text="Show queens (UCS)", font=("Arial", 14), command=draw_board_with_UCS) 
-draw_button.pack()
+# Frame phải
+right_frame = tk.Frame(boards_frame)
+right_frame.pack(side=tk.LEFT, padx=20)
 
-button_show_dls = tk.Frame(root)
-button_show_dls.pack(side=tk.BOTTOM, pady=5)
-draw_button = tk.Button(button_show_dls, text="Show queens (DLS)", font=("Arial", 14), command=draw_board_with_DLS) 
-draw_button.pack()
+# Canvas bên trái
+canvas_left = tk.Canvas(left_frame, width=cell_size*board_size, height=cell_size*board_size)
+canvas_left.pack()
 
-button_show_ids = tk.Frame(root)
-button_show_ids.pack(side=tk.BOTTOM, pady=5)
-draw_button = tk.Button(button_show_ids, text="Show queens (IDS)", font=("Arial", 14), command=draw_board_with_IDS) 
-draw_button.pack()
+# Canvas bên phải
+canvas_right = tk.Canvas(right_frame, width=cell_size*board_size, height=cell_size*board_size)
+canvas_right.pack()
 
-button_show_greedy = tk.Frame(root)
-button_show_greedy.pack(side=tk.BOTTOM, pady=5)
-draw_button = tk.Button(button_show_greedy, text="Show queens (Greedy)", font=("Arial", 14), command=draw_board_with_Greedy) 
-draw_button.pack()
+# ----------------------
+# Frame chứa các button (nằm ngang, bên dưới)
+button_frame = tk.Frame(root)
+button_frame.pack(side=tk.TOP, pady=20)
 
-button_show_a_star = tk.Frame(root)
-button_show_a_star.pack(side=tk.BOTTOM, pady=5)
-draw_button = tk.Button(button_show_a_star, text="Show queens (A*)", font=("Arial", 14), command=draw_board_with_A_star) 
-draw_button.pack()
+# Danh sách button và hàm tương ứng
+buttons = [
+    ("Clear", clear_board),
+    ("Stop", stop_algorithm),
+    ("Genetic Algorithm", draw_board_with_Genetic_Algorithm),
+    ("Simulated Annealing", draw_board_with_Simulated_Annealing),
+    ("Beam Search", draw_board_with_Beam_search),
+    ("Hill Climbing", draw_board_with_Hill_climbing),
+    ("A*", draw_board_with_A_star),
+    ("Greedy", draw_board_with_Greedy),
+    ("IDS", draw_board_with_IDS),
+    ("DLS", draw_board_with_DLS),
+    ("UCS", draw_board_with_UCS),
+    ("DFS", draw_board_with_DFS),
+    ("BFS", draw_board_with_BFS),
+]
 
-#-----------------------------
-button_stop = tk.Frame(root)
-button_stop.pack(side=tk.BOTTOM, pady=5)
-stop_button = tk.Button(button_stop, text="Stop", font=("Arial", 14), command=stop_algorithm)
-stop_button.pack()
+# Số button tối đa trên 1 hàng 
+max_btn = 5
 
-button_clear = tk.Frame(root)
-button_clear.pack(side=tk.BOTTOM, pady=5)
-clear_button = tk.Button(button_clear, text="Clear", font=("Arial", 14), command=clear_board)
-clear_button.pack()
+for i, (text, cmd) in enumerate(buttons):
+    row = i // max_btn   # xác định dòng
+    col = i % max_btn    # xác định cột
+    btn = tk.Button(button_frame, text=text, font=("Arial", 12), command=cmd, width=20)
+    btn.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+
+# Cho các cột co giãn đều
+for col in range(max_btn):
+    button_frame.grid_columnconfigure(col, weight=1)
+#--------------------------
 
 draw_board()
 

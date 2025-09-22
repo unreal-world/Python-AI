@@ -2,71 +2,76 @@
 # Nguyễn Văn Hoài - 20110107
 
 import numpy as np
-import random
+import time
 
 N = 8
-K = 20  # beam width 
+K = 40  # beam width
 
-def conflicts(state):
-    # Đếm số cặp quân hậu tấn công nhau trong state
-    cnt = 0
-    for c1 in range(len(state)):
-        for c2 in range(c1+1, len(state)):
-            if state[c1] == state[c2] or abs(state[c1]-state[c2]) == abs(c1-c2):
-                cnt += 1
-    return cnt
+def is_safe(state, col):
+    # Kiểm tra có thể đặt quân hậu ở (row=len(state), col) không
+    row = len(state)
+    for r, c in enumerate(state):
+        if c == col or abs(c - col) == abs(r - row):
+            return False
+    return True
+
+def heuristic(state):
+    # Đánh giá heuristic: số quân hậu đã đặt (càng nhiều càng tốt)
+    return len(state)
 
 def state_to_numpy(state):
-    # Chuyển state dạng list sang mảng numpy 8x8
+    """Chuyển state (list cột theo từng hàng) sang mảng 8x8"""
     arr = np.zeros((N, N), dtype=int)
-    for col, row in enumerate(state):
+    for row, col in enumerate(state):
         arr[row, col] = 1
     return arr
 
-def beam_search(max_iter=1000):
-    """Beam Search cho 8 quân hậu"""
-    beam = [[random.randint(0, N-1) for _ in range(N)] for _ in range(K)]
-    steps = [state_to_numpy(s) for s in beam]
+def beam_search():
+    # Thuật toán Beam Search cho 8 quân hậu.
+    # Trả về (steps, solution, step_count, total_time)
 
-    for _ in range(max_iter):
-        # Kiểm tra nghiệm
-        for s in beam:
-            if conflicts(s) == 0:
-                return steps, s
+    start_time = time.time()
 
-        # Sinh neighbors
-        neighbors = []
-        for state in beam:
+    steps = []
+    frontier = [[]]  # mỗi state là list cột
+    step_count = 0
+
+    while frontier:
+        candidates = []
+        for state in frontier:
+            steps.append(state_to_numpy(state))
+            step_count += 1
+            if len(state) == N:
+                elapsed = time.time() - start_time
+                return steps, state, step_count, elapsed
+            row = len(state)
             for col in range(N):
-                for row in range(N):
-                    if row != state[col]:
-                        new_state = state.copy()
-                        new_state[col] = row
-                        neighbors.append((conflicts(new_state), new_state))
+                if is_safe(state, col):
+                    new_state = state + [col]
+                    candidates.append(new_state)
+        # chọn K state tốt nhất dựa trên heuristic
+        candidates.sort(key=lambda s: heuristic(s), reverse=True)
+        frontier = candidates[:K]
 
-        if not neighbors:
-            # restart nếu không có neighbors
-            beam = [[random.randint(0, N-1) for _ in range(N)] for _ in range(K)]
-            steps.extend([state_to_numpy(s) for s in beam])
-            continue
-
-        # Chọn K state tốt nhất
-        neighbors.sort(key=lambda x: x[0])
-        beam = [s for _, s in neighbors[:K]]
-        steps.extend([state_to_numpy(s) for s in beam])
-
-    # Nếu hết max_iter mà chưa tìm thấy nghiệm
-    return steps, None
-
+    elapsed = time.time() - start_time
+    return steps, None, step_count, elapsed
 
 def get_solution_arr():
-    steps, solution = beam_search()
+    # Chỉ trả về solution dạng numpy array hoặc None
+    _, solution, _, _ = beam_search()
     if solution:
         return state_to_numpy(solution)
     return None
 
 def get_steps():
-    steps, _ = beam_search()
-    return steps
+    # Trả về toàn bộ steps, số bước và thời gian
+    steps, _, step_count, total_time = beam_search()
+    return steps, step_count, total_time
 
-#print(get_solution_arr())
+
+if __name__ == "__main__":
+    sol = get_solution_arr()
+    print("Solution:\n", sol)
+    steps, step_count, total_time = get_steps()
+    print("Số bước chạy:", step_count)
+    print("Thời gian chạy: %.4f giây" % total_time)

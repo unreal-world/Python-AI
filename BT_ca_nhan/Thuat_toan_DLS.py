@@ -1,8 +1,8 @@
-
 # Nguồn: Tham khảo từ AI
 # Nguyễn Văn Hoài - 20110107
 
 import numpy as np
+import time
 
 N = 8
 
@@ -18,17 +18,16 @@ def goal_test(state):
     return len(state) == N  # đủ N quân hậu
 
 def state_to_board(state):
-    #Chuyển state (list vị trí hàng cho từng cột) thành mảng 8x8
+    # Chuyển state (list vị trí hàng cho từng cột) thành mảng 8x8
     board = np.zeros((N, N), dtype=int)
     for col, row in enumerate(state):
         board[row][col] = 1
     return board
 
-def recursive_dls(state, limit, steps):
-    #Recursive DLS: luôn lưu lại trạng thái hiện tại vào steps.
-    #steps: danh sách chứa các numpy array (mỗi array là 1 bàn cờ).
-    # Lưu trạng thái hiện tại
+def recursive_dls(state, limit, steps, step_counter):
+    # Recursive DLS: luôn lưu lại trạng thái hiện tại vào steps.
     steps.append(state_to_board(state))
+    step_counter[0] += 1  # tăng bộ đếm bước
 
     if goal_test(state):
         return state
@@ -40,7 +39,7 @@ def recursive_dls(state, limit, steps):
         cutoff_occurred = False
         for row in range(N):
             if is_safe(state, row, len(state)):
-                result = recursive_dls(state + [row], limit, steps)
+                result = recursive_dls(state + [row], limit, steps, step_counter)
                 if result == "cutoff":
                     cutoff_occurred = True
                 elif result != "failure":
@@ -48,18 +47,34 @@ def recursive_dls(state, limit, steps):
         return "cutoff" if cutoff_occurred else "failure"
 
 def dls(limit):
+    # Depth Limited Search cho 8 quân hậu.
+    # Trả về (steps, solution, step_count, total_time)
+
+    start_time = time.time()
     steps = []
-    result = recursive_dls([], limit, steps)
-    return steps, result
+    step_counter = [0]  # dùng list để tham chiếu trong đệ quy
+
+    result = recursive_dls([], limit, steps, step_counter)
+
+    total_time = time.time() - start_time
+    if result not in ("failure", "cutoff"):
+        return steps, state_to_board(result), step_counter[0], total_time
+    else:
+        return steps, None, step_counter[0], total_time
 
 def get_solution_arr():
-    steps, result = dls(N)
-    if result not in ("failure", "cutoff"):
-        return steps[-1]  # trạng thái cuối cùng
-    return None
+    # Lấy nghiệm cuối cùng (numpy array 8x8) hoặc None
+    _, solution, _, _ = dls(N)
+    return solution
 
 def get_steps():
-    steps, _ = dls(N)
-    return steps
+    # Lấy tất cả steps, step_count và thời gian
+    steps, _, step_count, total_time = dls(N)
+    return steps, step_count, total_time
 
-#print(get_solution_arr())
+if __name__ == "__main__":
+    sol = get_solution_arr()
+    print("Solution:\n", sol)
+    steps, step_count, total_time = get_steps()
+    print("Số bước chạy:", step_count)
+    print("Thời gian chạy: %.4f giây" % total_time)

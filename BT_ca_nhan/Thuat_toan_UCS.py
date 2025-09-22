@@ -1,10 +1,10 @@
-
 # Nguồn: Tham khảo từ AI
 # Nguyễn Văn Hoài - 20110107
 
 import numpy as np
 import heapq
 import itertools
+import time
 
 N = 8
 counter = itertools.count()  # bộ đếm duy nhất để tránh so sánh numpy
@@ -22,7 +22,8 @@ def is_safe(board, row, col):
 
 def cost_of_placement(board, row, col):
     #Tính chi phí khi đặt một quân hậu tại (row, col):
-    #Chiếm bao nhiêu ô bên phải cùng hàng + 2 đường chéo bên phải
+    # Các ô bên phải cùng hàng
+    # Các ô trên 2 đường chéo bên phải
 
     count = 0
     for j in range(col+1, N):  # cùng hàng bên phải
@@ -35,7 +36,11 @@ def cost_of_placement(board, row, col):
     return count
 
 def ucs():
-    #Trả về tất cả các bước (steps) để thuật toán UCS tìm nghiệm.
+    # Uniform Cost Search cho 8 quân hậu.
+    # Trả về (steps, solution, step_count, total_time)
+
+    start_time = time.time()
+    step_count = 0
 
     start = np.zeros((N, N), dtype=int)
     pq = [(0, next(counter), start, 0)]  # (cost, id, board, col)
@@ -44,9 +49,11 @@ def ucs():
     while pq:
         cost, _, board, col = heapq.heappop(pq)
         steps.append(board.copy())
+        step_count += 1
 
         if col >= N:
-            return steps  # nghiệm chi phí nhỏ nhất
+            total_time = time.time() - start_time
+            return steps, board, step_count, total_time  # nghiệm chi phí nhỏ nhất
 
         for row in range(N):
             if is_safe(board, row, col):
@@ -55,13 +62,22 @@ def ucs():
                 new_cost = cost + cost_of_placement(board, row, col)
                 heapq.heappush(pq, (new_cost, next(counter), new_board, col + 1))
 
-    return steps
+    total_time = time.time() - start_time
+    return steps, None, step_count, total_time
 
 def get_solution_arr():
-    #Lấy nghiệm cuối cùng (mảng numpy 8x8) từ UCS.
-    steps = ucs()
-    if steps:
-        return steps[-1]  # trạng thái cuối cùng là nghiệm
-    return None
+    # Lấy nghiệm cuối cùng (numpy array 8x8) hoặc None
+    _, solution, _, _ = ucs()
+    return solution
 
-#print(get_solution_arr())
+def get_steps():
+    # Lấy tất cả steps, step_count và thời gian
+    steps, _, step_count, total_time = ucs()
+    return steps, step_count, total_time
+
+if __name__ == "__main__":
+    sol = get_solution_arr()
+    print("Solution:\n", sol)
+    steps, step_count, total_time = get_steps()
+    print("Số bước chạy:", step_count)
+    print("Thời gian chạy: %.4f giây" % total_time)

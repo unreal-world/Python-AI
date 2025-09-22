@@ -14,6 +14,7 @@ import Thuat_toan_Simulated_Annealing as thuat_toan_Simulated_Annealing
 import Thuat_toan_Genetic_Algorithm as thuat_toan_Genetic_Algorithm
 
 import tkinter as tk
+from tkinter import messagebox
 import time
 
 root = tk.Tk()
@@ -37,7 +38,7 @@ def draw_board():
 def draw_board_with_BFS():
     global running
     running = True
-    steps = thuat_toan_BFS.bfs()
+    steps, step_count, total_time = thuat_toan_BFS.get_steps()
     for state in steps:
         if not running:
             break
@@ -52,11 +53,12 @@ def draw_board_with_BFS():
                     )
         time.sleep(0.01)
         root.update() 
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
 
 def draw_board_with_DFS():
     global running 
     running = True
-    steps = thuat_toan_DFS.dfs()
+    steps, step_count, total_time = thuat_toan_DFS.get_steps()
     for state in steps:
         if not running:
             break
@@ -71,11 +73,12 @@ def draw_board_with_DFS():
                     )
         time.sleep(0.01)
         root.update()
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
 
 def draw_board_with_UCS():
     global running
     running = True
-    steps = thuat_toan_UCS.ucs()
+    steps, step_count, total_time = thuat_toan_UCS.get_steps()
     for state in steps:
         if not running:
             break
@@ -90,11 +93,12 @@ def draw_board_with_UCS():
                     )
         time.sleep(0.01)
         root.update()
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
 
 def draw_board_with_DLS():
     global running
     running = True
-    steps = thuat_toan_DLS.get_steps()
+    steps, step_count, total_time = thuat_toan_DLS.get_steps()
     for state in steps:
         if not running:
             break
@@ -109,11 +113,12 @@ def draw_board_with_DLS():
                     )
         time.sleep(0.01)
         root.update()
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
 
 def draw_board_with_IDS():
     global running
     running = True
-    steps = thuat_toan_IDS.get_steps()
+    steps, step_count, total_time = thuat_toan_IDS.get_steps()
     for state in steps:
         if not running:
             break
@@ -128,11 +133,12 @@ def draw_board_with_IDS():
                     )
         time.sleep(0.01)
         root.update()
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
 
 def draw_board_with_Greedy():
     global running
     running = True
-    steps = thuat_toan_Greedy.get_steps()
+    steps, step_count, total_time = thuat_toan_Greedy.get_steps()
     for state in steps:
         if not running:
             break
@@ -147,11 +153,12 @@ def draw_board_with_Greedy():
                     )
         time.sleep(0.01)
         root.update()
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
 
 def draw_board_with_A_star():
     global running
     running = True
-    steps = thuat_toan_A_star.get_steps()
+    steps, step_count, total_time = thuat_toan_A_star.get_steps()
     for state in steps:
         if not running:
             break
@@ -165,12 +172,13 @@ def draw_board_with_A_star():
                         text="♛", font=("Arial", 32), fill="black"
                     )
         time.sleep(0.01)
-        root.update()       
+        root.update() 
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")      
 
 def draw_board_with_Hill_climbing():
     global running
     running = True
-    steps = thuat_toan_Hill_climbing.get_steps()
+    steps, step_count, total_time = thuat_toan_Hill_climbing.get_steps()
     for state in steps:
         if not running:
             break
@@ -185,11 +193,12 @@ def draw_board_with_Hill_climbing():
                     )
         time.sleep(0.01)
         root.update()
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
 
 def draw_board_with_Beam_search():
     global running
     running = True
-    steps = thuat_toan_Beam_search.get_steps()
+    steps, step_count, total_time = thuat_toan_Beam_search.get_steps()
     for state in steps:
         if not running:
             break
@@ -204,11 +213,12 @@ def draw_board_with_Beam_search():
                     )
         time.sleep(0.01)
         root.update()
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
 
 def draw_board_with_Simulated_Annealing():
     global running
     running = True
-    steps = thuat_toan_Simulated_Annealing.get_steps()
+    steps, step_count, total_time = thuat_toan_Simulated_Annealing.get_steps()
     for state in steps:
         if not running:
             break
@@ -223,11 +233,12 @@ def draw_board_with_Simulated_Annealing():
                     )
         time.sleep(0.01)
         root.update()
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
 
 def draw_board_with_Genetic_Algorithm():
     global running
     running = True
-    steps = thuat_toan_Genetic_Algorithm.get_steps()
+    steps, step_count, total_time = thuat_toan_Genetic_Algorithm.get_steps()
     for state in steps:
         if not running:
             break
@@ -242,6 +253,7 @@ def draw_board_with_Genetic_Algorithm():
                     )
         time.sleep(0.01)
         root.update()
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
 
 #---------------------------
 def clear_board():

@@ -15,7 +15,7 @@ def is_safe(state, row):
             return False
     return True
 
-def count_attacks(state, row, col):
+def count_conflicts(state, row, col):
     # Đếm số ô bị loại bỏ thêm nếu đặt quân hậu ở (row, col).
     attacked = 0
     for c in range(col+1, N):
@@ -72,7 +72,7 @@ def a_star_search():
         col = len(state)
         for row in range(N):
             if is_safe(state, row):
-                cost = count_attacks(state, row, col)
+                cost = count_conflicts(state, row, col)
                 new_state = state + [row]
                 new_costs = costs + [cost]
                 heapq.heappush(frontier, (f(new_state, new_costs), new_state, new_costs))

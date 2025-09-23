@@ -9,7 +9,7 @@ N = 8
 def is_safe(state, row, col):
     # Kiểm tra có thể đặt quân hậu tại (row, col) không
     for c in range(len(state)):   # duyệt qua các cột đã đặt hậu
-        r = state[c]              # hàng tại cột c
+        r = state[c]              # hàng tại cột c #Ví dụ: state = [0, 4] nghĩa là: cột 0 đặt hậu ở hàng 0, cột 1 đặt hậu ở hàng 4.
         if r == row or abs(r - row) == abs(c - col):
             return False
     return True

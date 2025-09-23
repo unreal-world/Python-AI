@@ -21,19 +21,37 @@ def is_safe(board, row, col):
     return True
 
 def cost_of_placement(board, row, col):
-    #Tính chi phí khi đặt một quân hậu tại (row, col):
-    # Các ô bên phải cùng hàng
-    # Các ô trên 2 đường chéo bên phải
+    # Chi phí khi đặt 1 quân hậu tại (row, col)= số ô mà quân hậu đó khống chế (cùng hàng, cùng cột, và 2 đường chéo).
+    # Tổng cost càng thấp càng tốt.
 
     count = 0
-    for j in range(col+1, N):  # cùng hàng bên phải
-        count += 1
-    for d in range(1, N):      # các đường chéo bên phải
-        if row-d >= 0 and col+d < N:
+
+    # cùng hàng
+    for j in range(N):
+        if j != col:
             count += 1
-        if row+d < N and col+d < N:
+
+    # cùng cột
+    for i in range(N):
+        if i != row:
             count += 1
+
+    # chéo chính (\)
+    for d in range(1, N):
+        if row - d >= 0 and col - d >= 0:
+            count += 1
+        if row + d < N and col + d < N:
+            count += 1
+
+    # chéo phụ (/)
+    for d in range(1, N):
+        if row - d >= 0 and col + d < N:
+            count += 1
+        if row + d < N and col - d >= 0:
+            count += 1
+
     return count
+
 
 def ucs():
     # Uniform Cost Search cho 8 quân hậu.

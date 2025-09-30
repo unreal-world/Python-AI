@@ -1,5 +1,7 @@
-Bai tap Mon AI
-*Bai tap ca nhan: Chay file UI_8_quan_hau.py
+Bài tập cá nhân môn AI - Nguyễn Văn Hoài - 20110107
+
+
+**Hướng dẫn: Vào thư mục "BT_ca_nhan", sau đó chạy file "UI_8_quan_hau.py"
 
 # Demo DFS
 

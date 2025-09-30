@@ -14,6 +14,9 @@ import Thuat_toan_Simulated_Annealing as thuat_toan_Simulated_Annealing
 import Thuat_toan_Genetic_Algorithm as thuat_toan_Genetic_Algorithm
 import Thuat_toan_AND_OR as thuat_toan_AND_OR
 import Thuat_toan_Sensorless_Problem as thuat_toan_Sensorless_Problem
+import Thuat_toan_Partially_Observable as thuat_toan_Partially_Observable
+import Thuat_toan_Backtracking as thuat_toan_Backtracking
+import Thuat_toan_Forward_Checking as thuat_toan_Forward_Checking
 
 import tkinter as tk
 from tkinter import messagebox
@@ -297,6 +300,66 @@ def draw_board_with_Sensorless_Problem():
         root.update()
     messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
 
+def draw_board_with_Partially_Observable():
+    global running
+    running = True
+    steps, step_count, total_time = thuat_toan_Partially_Observable.get_steps()
+    for state in steps:
+        if not running:
+            break
+        clear_board()
+        for i in range(8):
+            for j in range(8):
+                if state[i][j] == 1:
+                    canvas_right.create_text(
+                        j * cell_size + cell_size // 2,
+                        i * cell_size + cell_size // 2,
+                        text="♛", font=("Arial", 32), fill="black"
+                    )
+        time.sleep(0.01)
+        root.update()
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
+
+def draw_board_with_Backtracking():
+    global running
+    running = True
+    steps, step_count, total_time = thuat_toan_Backtracking.get_steps()
+    for state in steps:
+        if not running:
+            break
+        clear_board()
+        for i in range(8):
+            for j in range(8):
+                if state[i][j] == 1:
+                    canvas_right.create_text(
+                        j * cell_size + cell_size // 2,
+                        i * cell_size + cell_size // 2,
+                        text="♛", font=("Arial", 32), fill="black"
+                    )
+        time.sleep(0.01)
+        root.update()
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
+
+def draw_board_with_Forward_Checking():
+    global running
+    running = True
+    steps, step_count, total_time = thuat_toan_Forward_Checking.get_steps()
+    for state in steps:
+        if not running:
+            break
+        clear_board()
+        for i in range(8):
+            for j in range(8):
+                if state[i][j] == 1:
+                    canvas_right.create_text(
+                        j * cell_size + cell_size // 2,
+                        i * cell_size + cell_size // 2,
+                        text="♛", font=("Arial", 32), fill="black"
+                    )
+        time.sleep(0.01)
+        root.update()
+    messagebox.showinfo("Kết quả", f"Số bước: {step_count}, Thời gian: {total_time:.4f} giây")
+
 #---------------------------
 def clear_board():
     canvas_left.delete("all")
@@ -337,6 +400,9 @@ button_frame.pack(side=tk.TOP, pady=20)
 buttons = [
     ("Clear", clear_board),
     ("Stop", stop_algorithm),
+    ("Forward Checking", draw_board_with_Forward_Checking),
+    ("Backtracking", draw_board_with_Backtracking),
+    ("Partially Observable", draw_board_with_Partially_Observable),
     ("Sensorless Problem", draw_board_with_Sensorless_Problem),
     ("AND-OR", draw_board_with_AND_OR),
     ("Genetic Algorithm", draw_board_with_Genetic_Algorithm),
